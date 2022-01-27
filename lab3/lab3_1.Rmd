@@ -168,6 +168,11 @@ hsprings
 all_temp<-hsprings$temp_C
 mean(all_temp)
 ```
+```{r}
+all_d<-hsprings[,4]
+mean(all_d)
+```
+
 
 5. Save your hot springs data as a `.csv` file! Do not allow row names. 
 ```{r}

@@ -335,6 +335,16 @@ mean(all_temp)
 ## [1] 33.37222
 ```
 
+```r
+all_d<-hsprings[,4]
+mean(all_d)
+```
+
+```
+## [1] 4.335556
+```
+
+
 5. Save your hot springs data as a `.csv` file! Do not allow row names. 
 
 ```r
