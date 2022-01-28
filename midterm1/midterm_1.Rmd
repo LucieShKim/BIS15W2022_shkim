@@ -43,13 +43,24 @@ spec(elephants)
 ```
 4. (2 points) Change the names of the variables to lower case and change the class of the variable `sex` to a factor.
 ```{r}
-elephants<-data.frame(age=elephants$Age,height=elephants$Height,sex=elephants$Sex)
+elephants<-rename(elephants,age="Age",height="Height",sex="Sex")
+```
+
+```{r}
+#another way
+elephants<-select_all(elephants,tolower)
+```
+
+
+```{r}
 elephants$sex<-as.factor(elephants$sex)
 elephants
 ```
+
 ```{r}
 class(elephants$sex)
 ```
+
 
 5. (2 points) How many male and female elephants are represented in the data?
 ```{r}
@@ -73,8 +84,31 @@ ele_m<-subset.data.frame(elephants,sex=="M")
 mean(ele_m$age)
 mean(ele_m$height)
 ```
+```{r}
+#another way
+ele_mm<-filter(elephants,sex=="M")
+mean(ele_mm$age)
+mean(ele_mm$height)
+```
 
 8. (2 points) How does the average height of elephants compare by sex for individuals over 20 years old. Include the min and max height as well as the number of individuals in the sample as part of your analysis.  
+```{r}
+ele_m20<-filter(ele_m,age>20)
+```
+
+```{r}
+summary(ele_m20)
+dim(ele_m20)
+```
+
+```{r}
+ele_f20<-filter(ele_f,age>20)
+```
+
+```{r}
+summary(ele_f20)
+dim(ele_f20)
+```
 
 For the next series of questions, we will use data from a study on vertebrate community composition and impacts from defaunation in [Gabon, Africa](https://en.wikipedia.org/wiki/Gabon). One thing to notice is that the data include 24 separate transects. Each transect represents a path through different forest management areas.  
 
@@ -82,8 +116,48 @@ Reference: Koerner SE, Poulsen JR, Blanchard EJ, Okouyi J, Clark CJ. Vertebrate 
 
 9. (2 points) Load `IvindoData_DryadVersion.csv` and use the function(s) of your choice to get an idea of the overall structure. Change the variables `HuntCat` and `LandUse` to factors.
 
+```{r}
+midterm_dt<-readr::read_csv("data/IvindoData_DryadVersion.csv")
+spec(midterm_dt)
+```
+```{r}
+summary(midterm_dt)
+```
+
+```{r}
+glimpse(midterm_dt)
+```
+```{r}
+midterm_dt<-select_all(midterm_dt,tolower)
+```
+
+```{r}
+names(midterm_dt)
+```
+
+```{r}
+midterm_dt$huntcat<-as.factor(midterm_dt$huntcat)
+midterm_dt$landuse<-as.factor(midterm_dt$landuse)
+```
+
+```{r}
+class(midterm_dt$huntcat)
+class(midterm_dt$landuse)
+```
+
+
 10. (4 points) For the transects with high and moderate hunting intensity, how does the average diversity of birds and mammals compare?
+```{r}
+
+```
 
 11. (4 points) One of the conclusions in the study is that the relative abundance of animals drops off the closer you get to a village. Let's try to reconstruct this (without the statistics). How does the relative abundance (RA) of apes, birds, elephants, monkeys, rodents, and ungulates compare between sites that are less than 3km from a village to sites that are greater than 25km from a village? The variable `Distance` measures the distance of the transect from the nearest village. Hint: try using the `across` operator.  
+```{r}
+
+```
 
 12. (4 points) Based on your interest, do one exploratory analysis on the `gabon` data of your choice. This analysis needs to include a minimum of two functions in `dplyr.`
+```{r}
+
+```
+
