@@ -1,7 +1,7 @@
 ---
 title: "Midterm 1"
 author: "Please Add Your Name Here"
-date: "2022-01-28"
+date: "2022-02-01"
 output:
   html_document: 
     theme: spacelab
@@ -32,7 +32,7 @@ library(tidyverse)
 ## v ggplot2 3.3.5     v purrr   0.3.4
 ## v tibble  3.1.6     v dplyr   1.0.7
 ## v tidyr   1.1.4     v stringr 1.4.0
-## v readr   2.1.1     v forcats 0.5.1
+## v readr   2.1.2     v forcats 0.5.1
 ```
 
 ```
@@ -60,16 +60,10 @@ elephants<-readr::read_csv("data/ElephantsMF.csv")
 
 ```
 ## Rows: 288 Columns: 3
-```
-
-```
 ## -- Column specification --------------------------------------------------------
 ## Delimiter: ","
 ## chr (1): Sex
 ## dbl (2): Age, Height
-```
-
-```
 ## 
 ## i Use `spec()` to retrieve the full column specification for this data.
 ## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -279,23 +273,17 @@ midterm_dt<-readr::read_csv("data/IvindoData_DryadVersion.csv")
 
 ```
 ## Rows: 24 Columns: 26
-```
-
-```
 ## -- Column specification --------------------------------------------------------
 ## Delimiter: ","
 ## chr  (2): HuntCat, LandUse
 ## dbl (24): TransectID, Distance, NumHouseholds, Veg_Rich, Veg_Stems, Veg_lian...
-```
-
-```
 ## 
 ## i Use `spec()` to retrieve the full column specification for this data.
 ## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
 ```r
-spec(midterm_dt)
+spec(midterm_dt )
 ```
 
 ```
@@ -471,6 +459,64 @@ class(midterm_dt$landuse)
 
 
 10. (4 points) For the transects with high and moderate hunting intensity, how does the average diversity of birds and mammals compare?
+
+
+```r
+midterm_dt
+```
+
+```
+## # A tibble: 24 x 26
+##    transectid distance huntcat  numhouseholds landuse veg_rich veg_stems
+##         <dbl>    <dbl> <fct>            <dbl> <fct>      <dbl>     <dbl>
+##  1          1     7.14 Moderate            54 Park        16.7      31.2
+##  2          2    17.3  None                54 Park        15.8      37.4
+##  3          2    18.3  None                29 Park        16.9      32.3
+##  4          3    20.8  None                29 Logging     12.4      29.4
+##  5          4    16.0  None                29 Park        17.1      36  
+##  6          5    17.5  None                29 Park        16.5      29.2
+##  7          6    24.1  None                29 Park        14.8      31.2
+##  8          7    19.8  None                54 Logging     13.2      32.6
+##  9          8     5.78 High                25 Neither     12.6      23.7
+## 10          9     5.13 High                73 Logging     16        27.1
+## # ... with 14 more rows, and 19 more variables: veg_liana <dbl>, veg_dbh <dbl>,
+## #   veg_canopy <dbl>, veg_understory <dbl>, ra_apes <dbl>, ra_birds <dbl>,
+## #   ra_elephant <dbl>, ra_monkeys <dbl>, ra_rodent <dbl>, ra_ungulate <dbl>,
+## #   rich_allspecies <dbl>, evenness_allspecies <dbl>,
+## #   diversity_allspecies <dbl>, rich_birdspecies <dbl>,
+## #   evenness_birdspecies <dbl>, diversity_birdspecies <dbl>,
+## #   rich_mammalspecies <dbl>, evenness_mammalspecies <dbl>, ...
+```
+
+
+
+```r
+midterm_dt%>%
+  filter(huntcat=="Moderate" | huntcat=="High")%>%
+  summarise(mean_d_birds=mean(diversity_birdspecies))
+```
+
+```
+## # A tibble: 1 x 1
+##   mean_d_birds
+##          <dbl>
+## 1         1.64
+```
+
+
+
+```r
+midterm_dt%>%
+  filter(huntcat=="Moderate" | huntcat=="High")%>%
+  summarise(mean_d_mammals=mean(diversity_mammalspecies))
+```
+
+```
+## # A tibble: 1 x 1
+##   mean_d_mammals
+##            <dbl>
+## 1           1.71
+```
 
 
 11. (4 points) One of the conclusions in the study is that the relative abundance of animals drops off the closer you get to a village. Let's try to reconstruct this (without the statistics). How does the relative abundance (RA) of apes, birds, elephants, monkeys, rodents, and ungulates compare between sites that are less than 3km from a village to sites that are greater than 25km from a village? The variable `Distance` measures the distance of the transect from the nearest village. Hint: try using the `across` operator.  

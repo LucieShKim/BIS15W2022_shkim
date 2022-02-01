@@ -118,7 +118,7 @@ Reference: Koerner SE, Poulsen JR, Blanchard EJ, Okouyi J, Clark CJ. Vertebrate 
 
 ```{r}
 midterm_dt<-readr::read_csv("data/IvindoData_DryadVersion.csv")
-spec(midterm_dt)
+spec(midterm_dt )
 ```
 ```{r}
 summary(midterm_dt)
@@ -147,9 +147,25 @@ class(midterm_dt$landuse)
 
 
 10. (4 points) For the transects with high and moderate hunting intensity, how does the average diversity of birds and mammals compare?
-```{r}
 
+```{r}
+midterm_dt
 ```
+
+
+```{r}
+midterm_dt%>%
+  filter(huntcat=="Moderate" | huntcat=="High")%>%
+  summarise(mean_d_birds=mean(diversity_birdspecies))
+```
+
+
+```{r}
+midterm_dt%>%
+  filter(huntcat=="Moderate" | huntcat=="High")%>%
+  summarise(mean_d_mammals=mean(diversity_mammalspecies))
+```
+
 
 11. (4 points) One of the conclusions in the study is that the relative abundance of animals drops off the closer you get to a village. Let's try to reconstruct this (without the statistics). How does the relative abundance (RA) of apes, birds, elephants, monkeys, rodents, and ungulates compare between sites that are less than 3km from a village to sites that are greater than 25km from a village? The variable `Distance` measures the distance of the transect from the nearest village. Hint: try using the `across` operator.  
 ```{r}
