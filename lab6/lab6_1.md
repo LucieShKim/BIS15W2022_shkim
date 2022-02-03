@@ -1,6 +1,6 @@
 ---
 title: "`summarize()`, `tabyl()`, and `group_by()`"
-date: "2022-02-01"
+date: "2022-02-02"
 output:
   html_document: 
     theme: spacelab
@@ -66,25 +66,8 @@ remotes::install_github("allisonhorst/palmerpenguins")
 ```
 
 ```
-## Downloading GitHub repo allisonhorst/palmerpenguins@HEAD
-```
-
-```
-## Running `R CMD build`...
-```
-
-```
-## * checking for file 'C:\Users\ujm71\AppData\Local\Temp\RtmpiKVfBi\remotes292846a6e36d0\allisonhorst-palmerpenguins-6953027/DESCRIPTION' ... OK
-## * preparing 'palmerpenguins':
-## * checking DESCRIPTION meta-information ... OK
-## * checking for LF line-endings in source and make files and shell scripts
-## * checking for empty or unneeded directories
-## * building 'palmerpenguins_0.1.0.tar.gz'
-```
-
-```
-## 'C:/bis15folder/rpkgs'의 위치에 패키지(들)을 설치합니다.
-## (왜냐하면 'lib'가 지정되지 않았기 때문입니다)
+## Skipping install of 'palmerpenguins' from a github remote, the SHA1 (69530276) has not changed since last install.
+##   Use `force = TRUE` to force installation
 ```
 
 
@@ -394,6 +377,29 @@ msleep%>%
 ##         Rodentia     1    16       0    2
 ##       Scandentia     0     0       0    1
 ##     Soricomorpha     0     0       1    3
+```
+
+
+```r
+msleep%>%
+  group_by(order)%>%
+  summarize(n_vores=n_distinct(vore))%>%
+  filter(n_vores>1)
+```
+
+```
+## # A tibble: 9 x 2
+##   order           n_vores
+##   <chr>             <int>
+## 1 Artiodactyla          2
+## 2 Cingulata             2
+## 3 Didelphimorphia       2
+## 4 Diprotodontia         2
+## 5 Erinaceomorpha        2
+## 6 Hyracoidea            2
+## 7 Primates              3
+## 8 Rodentia              4
+## 9 Soricomorpha          3
 ```
 
 ## `summarize()`
