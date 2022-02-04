@@ -9,9 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Please Add Your Name Here" />
+<meta name="author" content="Songhee Kim" />
 
-<meta name="date" content="2022-02-01" />
+<meta name="date" content="2022-02-03" />
 
 <title>Midterm 1</title>
 
@@ -166,8 +166,8 @@ pre code {
 
 
 <h1 class="title toc-ignore">Midterm 1</h1>
-<h4 class="author">Please Add Your Name Here</h4>
-<h4 class="date">2022-02-01</h4>
+<h4 class="author">Songhee Kim</h4>
+<h4 class="date">2022-02-03</h4>
 
 </div>
 
@@ -198,7 +198,7 @@ pre code {
 <li><p>(2 points) Consider the definition of data science above. Although we are only part-way through the quarter, what specific elements of data science do you feel we have practiced? Provide at least one specific example.<br />
 #These days, as there is a concept called big data, the amount of data is huge. I think that programming like r is suitable to handle such a lot of data effectively and quickly, for example using data frame, I can quickly and easily organize a lot of data.</p></li>
 <li><p>(2 points) What is the most helpful or interesting thing you have learned so far in BIS 15L? What is something that you think needs more work or practice?<br />
-#data frame/ It would be good to practice to handle the data frame more freely because majoring in bio informatics, I should be able to classify big data like about numerous dna or patients and extract and use only the necessary information for the purpose. In the midterm 1 folder there is a second folder called <code>data</code>. Inside the <code>data</code> folder, there is a .csv file called <code>ElephantsMF</code>. These data are from Phyllis Lee, Stirling University, and are related to Lee, P., et al. (2013), “Enduring consequences of early experiences: 40-year effects on survival and success among African elephants (Loxodonta africana),” Biology Letters, 9: 20130011. <a href="https://www.kaggle.com/mostafaelseidy/elephantsmf">kaggle</a>.</p></li>
+#%&gt;% &amp; data frame/ %&gt;% is very useful and interesting in that it helps to apply many functions in one code chunk. data frame would be good to practice to handle the data frame more freely, because majoring in bio informatics, I should be able to classify big data like about numerous dna or patients and extract and use only the necessary information for the purpose. In the midterm 1 folder there is a second folder called <code>data</code>. Inside the <code>data</code> folder, there is a .csv file called <code>ElephantsMF</code>. These data are from Phyllis Lee, Stirling University, and are related to Lee, P., et al. (2013), “Enduring consequences of early experiences: 40-year effects on survival and success among African elephants (Loxodonta africana),” Biology Letters, 9: 20130011. <a href="https://www.kaggle.com/mostafaelseidy/elephantsmf">kaggle</a>.</p></li>
 <li><p>(2 points) Please load these data as a new object called <code>elephants</code>. Use the function(s) of your choice to get an idea of the structure of the data. Be sure to show the class of each variable.</p></li>
 </ol>
 <pre class="r"><code>elephants&lt;-readr::read_csv(&quot;data/ElephantsMF.csv&quot;)</code></pre>
@@ -255,6 +255,15 @@ elephants</code></pre>
 <ol start="7" style="list-style-type: decimal">
 <li>(2 points) How does the average age and height of elephants compare by sex?</li>
 </ol>
+<pre class="r"><code>elephants%&gt;%
+  group_by(sex)%&gt;%
+  summarise(mean_age=mean(age),mean_height=mean(height))</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   sex   mean_age mean_height
+##   &lt;fct&gt;    &lt;dbl&gt;       &lt;dbl&gt;
+## 1 F        12.8         190.
+## 2 M         8.95        185.</code></pre>
+<p>#other ways</p>
 <pre class="r"><code>ele_f&lt;-subset.data.frame(elephants,sex==&quot;F&quot;)
 mean(ele_f$age)</code></pre>
 <pre><code>## [1] 12.8354</code></pre>
@@ -265,8 +274,7 @@ mean(ele_m$age)</code></pre>
 <pre><code>## [1] 8.945145</code></pre>
 <pre class="r"><code>mean(ele_m$height)</code></pre>
 <pre><code>## [1] 185.1312</code></pre>
-<pre class="r"><code>#another way
-ele_mm&lt;-filter(elephants,sex==&quot;M&quot;)
+<pre class="r"><code>ele_mm&lt;-filter(elephants,sex==&quot;M&quot;)
 mean(ele_mm$age)</code></pre>
 <pre><code>## [1] 8.945145</code></pre>
 <pre class="r"><code>mean(ele_mm$height)</code></pre>
@@ -274,6 +282,17 @@ mean(ele_mm$age)</code></pre>
 <ol start="8" style="list-style-type: decimal">
 <li>(2 points) How does the average height of elephants compare by sex for individuals over 20 years old. Include the min and max height as well as the number of individuals in the sample as part of your analysis.</li>
 </ol>
+<pre class="r"><code>elephants%&gt;%
+  filter(age&gt;20)%&gt;%
+  group_by(sex)%&gt;%
+  summarise(mean_h=mean(height),min_h=min(height),max_h=max(height),
+            n=n())</code></pre>
+<pre><code>## # A tibble: 2 x 5
+##   sex   mean_h min_h max_h     n
+##   &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
+## 1 F       232.  193.  278.    37
+## 2 M       270.  229.  304.    13</code></pre>
+<p>#other ways</p>
 <pre class="r"><code>ele_m20&lt;-filter(ele_m,age&gt;20)</code></pre>
 <pre class="r"><code>summary(ele_m20)</code></pre>
 <pre><code>##       age            height      sex   
@@ -478,9 +497,29 @@ midterm_dt$landuse&lt;-as.factor(midterm_dt$landuse)</code></pre>
 ##            &lt;dbl&gt;
 ## 1           1.71</code></pre>
 <ol start="11" style="list-style-type: decimal">
-<li><p>(4 points) One of the conclusions in the study is that the relative abundance of animals drops off the closer you get to a village. Let’s try to reconstruct this (without the statistics). How does the relative abundance (RA) of apes, birds, elephants, monkeys, rodents, and ungulates compare between sites that are less than 3km from a village to sites that are greater than 25km from a village? The variable <code>Distance</code> measures the distance of the transect from the nearest village. Hint: try using the <code>across</code> operator.</p></li>
-<li><p>(4 points) Based on your interest, do one exploratory analysis on the <code>gabon</code> data of your choice. This analysis needs to include a minimum of two functions in <code>dplyr.</code></p></li>
+<li>(4 points) One of the conclusions in the study is that the relative abundance of animals drops off the closer you get to a village. Let’s try to reconstruct this (without the statistics). How does the relative abundance (RA) of apes, birds, elephants, monkeys, rodents, and ungulates compare between sites that are less than 3km from a village to sites that are greater than 25km from a village? The variable <code>Distance</code> measures the distance of the transect from the nearest village. Hint: try using the <code>across</code> operator.</li>
 </ol>
+<pre class="r"><code>midterm_dt%&gt;%
+  filter(distance&lt;3 | distance&gt;25)%&gt;%
+  summarise(across(contains(&quot;ra&quot;)))</code></pre>
+<pre><code>## # A tibble: 3 x 7
+##   transectid ra_apes ra_birds ra_elephant ra_monkeys ra_rodent ra_ungulate
+##        &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+## 1         15    0        85.0        0.29       9.09      3.74        1.86
+## 2         24    4.91     31.6        0         54.1       1.29        8.12
+## 3         27    0.24     68.2        0         25.6       4.05        1.88</code></pre>
+<ol start="12" style="list-style-type: decimal">
+<li>(4 points) Based on your interest, do one exploratory analysis on the <code>gabon</code> data of your choice. This analysis needs to include a minimum of two functions in <code>dplyr.</code></li>
+</ol>
+<pre class="r"><code>midterm_dt%&gt;%
+  filter(distance&gt;=10)%&gt;%
+  group_by(huntcat)%&gt;%
+  summarise(across(contains(&quot;evenness&quot;),mean,na.rm=T))</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   huntcat  evenness_allspecies evenness_birdspecies evenness_mammalspecies
+##   &lt;fct&gt;                  &lt;dbl&gt;                &lt;dbl&gt;                  &lt;dbl&gt;
+## 1 Moderate               0.787                0.704                   0.76
+## 2 None                   0.771                0.731                   0.71</code></pre>
 </div>
 
 

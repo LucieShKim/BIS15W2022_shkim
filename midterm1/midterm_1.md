@@ -1,7 +1,7 @@
 ---
 title: "Midterm 1"
-author: "Please Add Your Name Here"
-date: "2022-02-01"
+author: "Songhee Kim"
+date: "2022-02-03"
 output:
   html_document: 
     theme: spacelab
@@ -48,7 +48,7 @@ Wikipedia's definition of [data science](https://en.wikipedia.org/wiki/Data_scie
 #These days, as there is a concept called big data, the amount of data is huge. I think that programming like r is suitable to handle such a lot of data effectively and quickly, for example using data frame, I can quickly and easily organize a lot of data.
 
 2. (2 points) What is the most helpful or interesting thing you have learned so far in BIS 15L? What is something that you think needs more work or practice?  
-#data frame/ It would be good to practice to handle the data frame more freely because majoring in bio informatics, I should be able to classify big data like about numerous dna or patients and extract and use only the necessary information for the purpose.
+#%>% & data frame/ %>% is very useful and interesting in that it helps to apply many functions in one code chunk. data frame would be good to practice to handle the data frame more freely, because majoring in bio informatics, I should be able to classify big data like about numerous dna or patients and extract and use only the necessary information for the purpose.
 In the midterm 1 folder there is a second folder called `data`. Inside the `data` folder, there is a .csv file called `ElephantsMF`. These data are from Phyllis Lee, Stirling University, and are related to Lee, P., et al. (2013), "Enduring consequences of early experiences: 40-year effects on survival and success among African elephants (Loxodonta africana)," Biology Letters, 9: 20130011. [kaggle](https://www.kaggle.com/mostafaelseidy/elephantsmf).  
 
 3. (2 points) Please load these data as a new object called `elephants`. Use the function(s) of your choice to get an idea of the structure of the data. Be sure to show the class of each variable.
@@ -150,6 +150,23 @@ mean(elephants$age)
 
 7. (2 points) How does the average age and height of elephants compare by sex?
 
+
+```r
+elephants%>%
+  group_by(sex)%>%
+  summarise(mean_age=mean(age),mean_height=mean(height))
+```
+
+```
+## # A tibble: 2 x 3
+##   sex   mean_age mean_height
+##   <fct>    <dbl>       <dbl>
+## 1 F        12.8         190.
+## 2 M         8.95        185.
+```
+
+#other ways
+
 ```r
 ele_f<-subset.data.frame(elephants,sex=="F")
 mean(ele_f$age)
@@ -186,7 +203,6 @@ mean(ele_m$height)
 ```
 
 ```r
-#another way
 ele_mm<-filter(elephants,sex=="M")
 mean(ele_mm$age)
 ```
@@ -203,7 +219,27 @@ mean(ele_mm$height)
 ## [1] 185.1312
 ```
 
+
 8. (2 points) How does the average height of elephants compare by sex for individuals over 20 years old. Include the min and max height as well as the number of individuals in the sample as part of your analysis.  
+
+
+```r
+elephants%>%
+  filter(age>20)%>%
+  group_by(sex)%>%
+  summarise(mean_h=mean(height),min_h=min(height),max_h=max(height),
+            n=n())
+```
+
+```
+## # A tibble: 2 x 5
+##   sex   mean_h min_h max_h     n
+##   <fct>  <dbl> <dbl> <dbl> <int>
+## 1 F       232.  193.  278.    37
+## 2 M       270.  229.  304.    13
+```
+
+#other ways
 
 ```r
 ele_m20<-filter(ele_m,age>20)
@@ -521,7 +557,35 @@ midterm_dt%>%
 
 11. (4 points) One of the conclusions in the study is that the relative abundance of animals drops off the closer you get to a village. Let's try to reconstruct this (without the statistics). How does the relative abundance (RA) of apes, birds, elephants, monkeys, rodents, and ungulates compare between sites that are less than 3km from a village to sites that are greater than 25km from a village? The variable `Distance` measures the distance of the transect from the nearest village. Hint: try using the `across` operator.  
 
+```r
+midterm_dt%>%
+  filter(distance<3 | distance>25)%>%
+  summarise(across(contains("ra")))
+```
+
+```
+## # A tibble: 3 x 7
+##   transectid ra_apes ra_birds ra_elephant ra_monkeys ra_rodent ra_ungulate
+##        <dbl>   <dbl>    <dbl>       <dbl>      <dbl>     <dbl>       <dbl>
+## 1         15    0        85.0        0.29       9.09      3.74        1.86
+## 2         24    4.91     31.6        0         54.1       1.29        8.12
+## 3         27    0.24     68.2        0         25.6       4.05        1.88
+```
 
 12. (4 points) Based on your interest, do one exploratory analysis on the `gabon` data of your choice. This analysis needs to include a minimum of two functions in `dplyr.`
 
+```r
+midterm_dt%>%
+  filter(distance>=10)%>%
+  group_by(huntcat)%>%
+  summarise(across(contains("evenness"),mean,na.rm=T))
+```
+
+```
+## # A tibble: 2 x 4
+##   huntcat  evenness_allspecies evenness_birdspecies evenness_mammalspecies
+##   <fct>                  <dbl>                <dbl>                  <dbl>
+## 1 Moderate               0.787                0.704                   0.76
+## 2 None                   0.771                0.731                   0.71
+```
 
