@@ -453,8 +453,7 @@ qpcr_untidy %>%
     exp1_rep1:exp3_rep3,
     names_to= c("experiment", "replicate"),
     names_sep="_",
-    values_to="mRNA_expression"
-  )
+    values_to="mRNA_expression")
 ```
 
 ```
