@@ -1,10 +1,11 @@
 ---
 title: "Data Visualization: `ggplot` part 3"
 output:
-  html_document:
+  html_document: 
     theme: spacelab
     toc: yes
     toc_float: yes
+    keep_md: yes
   pdf_document:
     toc: yes
 ---
@@ -47,6 +48,8 @@ homerange <- read_csv(here("lab11", "data", "Tamburelloetal_HomeRangeDatabase.cs
 
 ## ggplot themes
 There are many options to change the theme of your plots. Have a look [here](https://www.datanovia.com/en/blog/ggplot-themes-gallery/) for some excellent examples. I am going to build a basic plot here and then use it throughout to illustrate the themes.
+
+
 ```{r}
 p <- homerange %>% 
   ggplot(aes(x=taxon, fill=trophic.guild))+
@@ -62,6 +65,15 @@ p+theme_linedraw()+
        y= "n",
        fill= "Trophic Guild")
 ```
+```{r}
+p+theme_dark()+
+  theme(axis.text.x = element_text(angle=60,hjust = 1))+
+  labs(title="Observations by Taxon in Homerange Data",
+       x=NULL,
+       y="n",
+       fill="Trophic Guild")
+```
+
 
 ## Legends
 There are lots of options to manipulate legends. Have a look [here](http://www.sthda.com/english/wiki/ggplot2-legend-easy-steps-to-change-the-position-and-the-appearance-of-a-graph-legend-in-r-software).
@@ -88,6 +100,26 @@ ls("package:ggthemes")[grepl("theme_", ls("package:ggthemes"))]
 
 ```{r}
 p+ theme_pander()+
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 60, hjust=1))+
+  labs(title = "Observations by Taxon in Homerange Data",
+       x = NULL,
+       y= "n",
+       fill= "Trophic Guild")
+```
+
+```{r}
+p+ theme_stata()+
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 60, hjust=1))+
+  labs(title = "Observations by Taxon in Homerange Data",
+       x = NULL,
+       y= "n",
+       fill= "Trophic Guild")
+```
+
+```{r}
+p+ theme_igray()+
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 60, hjust=1))+
   labs(title = "Observations by Taxon in Homerange Data",
@@ -137,7 +169,7 @@ my_palette <- paletteer_d("ggsci::hallmarks_light_cosmic")
 ```
 
 ```{r}
-barplot(rep(1,14), axes=FALSE, col=my_palette)
+barplot(rep(1,20), axes=T, col=my_palette)
 ```
 
 Now we just identify `my_palette` as part of `scale_fill_manual()`
@@ -164,13 +196,29 @@ homerange %>%
 ## Practice
 1. Revisit the relationship between mass and homerange using a scatterplot, but color the points by taxonomic class using a custom color theme.
 ```{r}
-
+homerange%>%
+  ggplot(aes(x=log10.mass,y=log10.hra, color=taxon))+
+  geom_point()+
+  theme_calc()+
+  labs(title = "Homerange & Mass by taxa",
+        fill="taxa")+
+  theme(plot.title = element_text(size = rel(1.5),hjust = 0.5))+
+  xlim(-1,7)+
+  ylim(-1,11)
 ```
 
 2. Build bar plots that show the representation by taxonomic class with carnivores and herbivores. Try using a color theme that matches your scatterplot to keep everything consistent.
 ```{r}
-
+homerange%>%
+  ggplot(aes(x=taxon, fill=trophic.guild))+
+  geom_bar(position="dodge")+
+  theme_calc()+
+  labs(title = "Taxon & Trophicguild",
+        fill="Trophicguild")+
+  theme(plot.title = element_text(size = rel(1.5),hjust = 0.5),
+        axis.text.x = element_text(angle = 60,hjust=1))
 ```
+
 
 ## Faceting: `facet_wrap()`
 [Faceting](https://ggplot2-book.org/facet.html) is one of the amazing features of ggplot. It allows us to make multi-panel plots for easy comparison. Here, I am making histograms of log10.mass for every taxon. We read the `~` in the `facet_wrap()` layer as `by`. The bin number doesn't work for every taxon, but it is enough to get the idea.
@@ -189,6 +237,9 @@ As you can imagine, there are lots of options for faceting. Another useful facet
 ```{r}
 p2+facet_grid(thermoregulation~class)
 ```
+
+
+
 
 ## That's it, let's take a break!   
 
