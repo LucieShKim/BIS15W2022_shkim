@@ -2,10 +2,11 @@
 title: "Joins and Lubridate"
 date: "`r Sys.Date()`"
 output:
-  html_document:
+  html_document: 
     theme: spacelab
     toc: yes
     toc_float: yes
+    keep_md: yes
 ---
 
 ```{r setup, include = FALSE}
@@ -60,7 +61,7 @@ class(spider_list[[3]])
 ## Practice
 1. What are the names of our list elements?
 ```{r}
-
+names(spider_list[[3]])
 ```
 
 ## Naming List Elements
@@ -110,10 +111,12 @@ The general syntax for joins is...
 
 `inner_join`  
 Where did customers 3 and 4 go?
+
 ```{r}
-inner_exampleDF <- inner_join(table_A, table_B, by="customer_ID")
+inner_exampleDF<-inner_join(table_A,table_B, by="customer_ID")
 inner_exampleDF
 ```
+
 
 `left_join`
 Where did customer 4 go? Notice the missing data for customer 3.
@@ -148,6 +151,8 @@ Provides the rows in the first table for which there are not matching values in 
 anti_exampleDF <- anti_join(table_A, table_B, by="customer_ID")
 anti_exampleDF
 ```
+
+
 ## Joining the spider data
 Here, the latitude and longitude for each spider were recorded from the field records at a later date, and now we need to join it to our `spiders_all` data frame. The lat/long were recorded into one single file for each observation. Let's read in the lat/long data.
 ```{r, message = FALSE}
@@ -155,10 +160,16 @@ spiders_locs <- read_csv("data/spiders locations/spiders_locations.csv")
 spiders_locs
 ```
 
+
 We will use a join here to merge lat/long to our data frame. Both files contain a unique identifier called `Accession` which we will use to join.  
 
 ## Practice
-1. Which type of join is most appropriate in this case?  
+1. Which type of join is most appropriate in this case? 
+```{r}
+spider_prct<-inner_join(spiders_all,spiders_locs,by="Accession")
+spider_prct
+```
+
 ```{r}
 spiders_with_locs <- left_join(spiders_all, spiders_locs, by = c("Accession"))
 summary(spiders_with_locs)
@@ -207,24 +218,37 @@ dateformat5 <- "20200922 170000"
 ## Practice 
 1. Convert each of the examples above using lubridate.
 ```{r}
-
+ymd(dateformat1)
 ```
 
 ```{r}
-
+mdy(dateformat2)
 ```
 
 ```{r}
-
+as.Date(dateformat2,format = "%m-%d-%y")
 ```
 
 ```{r}
-
+dmy(dateformat3)
 ```
 
 ```{r}
-
+as.Date(dateformat3,format = "%d/%m/%y")
 ```
+
+```{r}
+as.Date(dateformat4,format = "%m-%d-%y %t")
+```
+
+```{r}
+mdy_hms(dateformat4)
+```
+
+```{r}
+ymd_hms(dateformat5)
+```
+
 
 Have a look at these options.
 ```{r}
@@ -236,6 +260,7 @@ minute(datetime)
 second(datetime)
 wday(datetime, label=T)
 ```
+
 
 ## Export for part 2  
 We need to save our final data to a `.csv` so we can use it in part 2. 
