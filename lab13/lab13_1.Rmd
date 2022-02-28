@@ -185,28 +185,34 @@ names(homerange)
 ```
 
 ```{r}
-homerange %>% 
-  ggplot(aes(x=locomotion, fill=trophic.guild)) +
+homerange%>%
+  ggplot(aes(x=locomotion, fill=trophic.guild))+
   geom_bar(position="dodge")
 ```
 
 ```{r}
-homerange %>% 
-  ggplot(aes(x=locomotion, fill=thermoregulation)) +
+homerange%>%
+  ggplot(aes(x=locomotion,fill=thermoregulation))+
   geom_bar(position="dodge")
 ```
+
 
 2. Build a shiny app that produces a barplot that explores `locomotion` type with a fill reaction for the variables `trophic.guild` and `thermoregulation`.  
 
 ```{r}
 library(shiny)
 
-ui <- fluidPage(
-  
+ui <- fluidPage(titlePanel("Homerange Locomotion"),
+                radioButtons("x","Select Fill Variable",choices = c("trophic.guild", "thermoregulation"),selected = "trophic.guild"),
+                plotOutput("plot",width = "600px", height = "500px")
 )
 
 server <- function(input, output, session) {
-  
+  output$plot<-renderPlot({
+    ggplot(homerange, aes_string(x="locomotion",fill=input$x))+
+      geom_bar(position="dodge", color="black", alpha=0.8)+
+      theme_light(base_size = 30)
+  })
 }
 
 shinyApp(ui, server)
@@ -217,14 +223,14 @@ library(shiny)
 
 ui <- fluidPage(
   radioButtons("x", "Select X Variable", choices = c("trophic.guild", "thermoregulation"), selected = "trophic.guild"),
-  plotOutput("plot", width = "500px", height = "400px")
+  plotOutput("plot", width = "800px", height = "700px")
 )
 
 server <- function(input, output, session) {
   output$plot <- renderPlot({
-    ggplot(data=homerange, aes_string(x = "locomotion", fill=input$x)) + 
-    geom_bar(position="dodge", color="black", alpha=0.8) + 
-    theme_light(base_size = 18)
+    ggplot(data=homerange, aes_string(x = "locomotion", fill=input$x)) +
+      geom_bar(position="dodge", color="gray", alpha=0.8) +
+      theme_light(base_size = 17)
   })
 }
 
@@ -324,6 +330,33 @@ ui <- fluidPage(
 
 shinyApp(ui, server)
 ```
+```{r}
+library(shiny)
+
+ui <- fluidPage(titlePanel("Log 10 Homerange by Taxon"),
+                sidebarLayout(
+                  sidebarPanel(
+                    selectInput("taxon","Select Taxon of Interest:", choices = unique(homerange$taxon)), hr(),
+                    helpText("Reference: Tamburello N, Cote IM, Dulvy NK (2015) Energy and the scaling of animal space use. The American Naturalist 186(2):196-211.")),
+                  
+                  mainPanel(
+                    plotOutput("taxonPlot"))
+                  )
+                  )
+                
+
+server <- function(input, output, session) {
+  output$taxonPlot<-renderPlot({
+    homerange%>%
+      filter(taxon==input$taxon)%>%
+      ggplot(aes(x=log10.hra))+
+      geom_density(color="black", fill="red", alpha=0.5)
+  })
+}
+
+shinyApp(ui, server)
+```
+
 
 ## Packages for next time  
 Please install shinydashboard below for part 2!  
