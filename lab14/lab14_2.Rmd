@@ -2,10 +2,11 @@
 title: "Data Visualization: Venn Diagrams & Word Clouds"
 date: "`r Sys.Date()`"
 output:
-  html_document:
+  html_document: 
     theme: spacelab
     toc: yes
     toc_float: yes
+    keep_md: yes
   pdf_document:
     toc: yes
 ---
@@ -23,7 +24,7 @@ library(tidyverse)
 #install.packages("ggVennDiagram")
 library(ggVennDiagram)
 library(RColorBrewer)
-#install.packages("ggworldcloud")
+#install.packages("ggwordcloud")
 library(ggwordcloud)
 ```
 
@@ -31,7 +32,7 @@ library(ggwordcloud)
 Let's use the homerange data-- I've slightly modified it with a new observation
 ```{r}
 homerange <- read_csv("data/modified_Tamburelloetal_HomeRangeDatabase.csv")
-
+homerange
 ```
 
 ## Venn Diagrams
@@ -65,7 +66,7 @@ The list represents the number of circles going into the venn diagram" and the v
 ```{r}
 fly_or_swim_list <- list(flying_vec, swimming_vec)
 
-ggVennDiagram(fly_or_swim_list, category.names = c("Fly", "Swim"))
+ggVennDiagram(fly_or_swim_list, category.names = c("Fliers", "Swim"))
 ```
 
 Woah! an image!
@@ -79,7 +80,7 @@ Do they fly? Are they a bird?
 We can recycle the `flying_vec`
 Do they fly?
 ```{r}
-# flying_vec
+flying_vec
 ```
 
 Are they a bird?
@@ -107,7 +108,9 @@ homerange%>%
 
 what is the flying non-bird?
 ```{r}
-
+homerange%>%
+  filter(locomotion=="flying")%>%
+  filter(taxon!="birds")
 ```
 
 
@@ -134,7 +137,7 @@ ggVennDiagram(fly_bird_herbi_list, category.names = c("Fly", "Bird", "Herbivore"
 Lets work with the 2 question plot for now:
 ```{r}
   # you can toggle edge size
-venn_plot <- ggVennDiagram(fly_or_bird_list, category.names = c("Fly", "Bird"), edge_size = 1.5)
+venn_plot <- ggVennDiagram(fly_or_bird_list, category.names = c("Fly", "Bird"), edge_size = 2.5)
 
 venn_plot +
   scale_fill_distiller(palette = "Greys")+ #distiller is for discrete data
@@ -192,11 +195,13 @@ ecto_vec<- homerange %>%
 ```
 
 ```{r}
-
 # Make the list of vectors:
-
-
+venn_prac<-list(swimming_vec, carni_vec, aqua_vec, ecto_vec)
+ggVennDiagram(venn_prac)
+```
+```{r}
 # Make the plot:
+venn_plot_pr<-ggVennDiagram(venn_prac, category.names = c("Swim", "Carni", "Aqua", " Ecto"), edge_size = 2)
 ```
 
 
@@ -236,7 +241,7 @@ ggplot(aes(
   color = taxon
   )) +
   geom_text_wordcloud() +
-  scale_size_area(max_size = 20) +
+  scale_size_area(max_size = 20)+
   theme_minimal()
 ```
 
@@ -248,11 +253,20 @@ If they dont fit, try tinkering the `scale_size_area(max_size =   )`
 
 make the count table:
 ```{r}
-
+rep_class<-homerange%>%
+  filter(class=="reptilia")%>%
+  count(family)
+rep_class
 ```
 
 
 make the plot:
 ```{r}
-
+rep_class%>%
+  ggplot(aes(label=family,
+            size=n,
+            color=family))+
+  geom_text_wordcloud()+
+  scale_size_area(max_size = 15)+
+  theme_light()
 ```
