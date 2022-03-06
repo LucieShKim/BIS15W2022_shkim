@@ -1,11 +1,11 @@
 ---
 title: "Lab 13 Homework"
-author: "Please Add Your Name Here"
+author: "Songhee Kim"
 date: "`r Sys.Date()`"
 output:
-  html_document:
+  html_document: 
     theme: spacelab
-    toc: no
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -22,6 +22,7 @@ Make sure to use the formatting conventions of RMarkdown to make your report nea
 library(tidyverse)
 library(shiny)
 library(shinydashboard)
+require(janitor)
 ```
 
 ## Choose Your Adventure!
@@ -31,12 +32,109 @@ For this homework assignment, you have two choices of data. You only need to bui
 The data for this assignment come from the [University of California Information Center](https://www.universityofcalifornia.edu/infocenter). Admissions data were collected for the years 2010-2019 for each UC campus. Admissions are broken down into three categories: applications, admits, and enrollees. The number of individuals in each category are presented by demographic.  
 
 **1. Load the `UC_admit.csv` data and use the function(s) of your choice to get an idea of the overall structure of the data frame, including its dimensions, column names, variable classes, etc. As part of this, determine if there are NA's and how they are treated.**  
+```{r}
+uc_admit<-readr::read_csv("data/uc_data/UC_admit.csv")
+```
+```{r}
+uc_admit
+```
 
 
 **2. The president of UC has asked you to build a shiny app that shows admissions by ethnicity across all UC campuses. Your app should allow users to explore year, campus, and admit category as interactive variables. Use shiny dashboard and try to incorporate the aesthetics you have learned in ggplot to make the app neat and clean.**
 
 
+
+```{r}
+uc_admission<-clean_names(uc_admit)
+```
+
+```{r}
+table(uc_admission$academic_yr)
+```
+
+```{r}
+ui <- dashboardPage(
+  dashboardHeader(title = "Admissions by ethnicity across all UC campuses"),
+  dashboardSidebar(disable = T),
+  dashboardBody(
+  fluidRow(
+  box(title = "Plot Options", width = 3,
+  selectInput("x", "Select Year", choices = unique(uc_admission$academic_yr), 
+              selected = "Admits"),
+  selectInput("y", "Select Category", choices = c("Admits", "Applicants", "Enrollees"), 
+              selected = "2010"),
+  selectInput("z", "Select Campus", choices = unique(uc_admission$campus), 
+              selected = "Davis"),
+  ), # close the first box
+  
+  box(title = "UC admission", width = 7,
+  plotOutput("plot", width = "600px", height = "500px")
+  ) # close the second box
+  ) # close the row
+  ) # close the dashboard body
+) # close the ui
+
+server <- function(input, output, session) { 
+  session$onSessionEnded(stopApp)
+  output$plot <- renderPlot({
+  uc_admission%>%
+      filter(academic_yr==input$x & category==input$y & campus==input$z) %>%
+      ggplot(aes(x=ethnicity, y=filtered_count_fr, fill=ethnicity)) +
+      geom_col() + 
+      theme_light()+
+      theme(axis.text.x = element_text(angle = 60, hjust = 1))
+    })
+}
+
+shinyApp(ui, server)
+```
+
+```{r}
+table(uc_admission$ethnicity)
+```
+
 **3. Make alternate version of your app above by tracking enrollment at a campus over all of the represented years while allowing users to interact with campus, category, and ethnicity.**  
+```{r}
+uc_admission$academic_yr <- as.factor(uc_admission$academic_yr)
+```
+
+```{r}
+ui <- dashboardPage(
+  dashboardHeader(title = "UC campuses"),
+  dashboardSidebar(disable = T),
+  dashboardBody(
+  fluidRow(
+  box(title = "Plot Options", width = 3,
+  selectInput("x", "Select Ethnicity", choices = unique(uc_admission$ethnicity), 
+              selected = "African American"),
+  selectInput("y", "Select Category", choices = c("Admits", "Applicants", "Enrollees"), 
+              selected = "2010"),
+  selectInput("z", "Select Campus", choices = unique(uc_admission$campus), 
+              selected = "Davis"),
+  ), # close the first box
+  
+  box(title = "Admission", width = 7,
+  plotOutput("plot", width = "600px", height = "500px")
+  ) # close the second box
+  ) # close the row
+  ) # close the dashboard body
+) # close the ui
+
+server <- function(input, output, session) { 
+  session$onSessionEnded(stopApp)
+  output$plot <- renderPlot({
+  uc_admission%>%
+      filter(ethnicity==input$x & category==input$y & campus==input$z) %>%
+      ggplot(aes(x=academic_yr, y=filtered_count_fr)) +
+      geom_col() + 
+      theme_light()+
+      theme(axis.text.x = element_text(angle = 60, hjust = 1))
+    })
+}
+
+shinyApp(ui, server)
+```
+
 
 
 ## Option 2
@@ -44,7 +142,62 @@ We will use data from a study on vertebrate community composition and impacts fr
 
 **1. Load the `IvindoData_DryadVersion.csv` data and use the function(s) of your choice to get an idea of the overall structure, including its dimensions, column names, variable classes, etc. As part of this, determine if NA's are present and how they are treated.**  
 
+```{r}
+vertebrate<-readr::read_csv("data/gabon_data/IvindoData_DryadVersion.csv")
+vertebrate
+```
+
+```{r}
+vertebrate<-clean_names(vertebrate)
+```
+
+
+```{r}
+summary(vertebrate)
+```
+
+```{r}
+names(vertebrate)
+```
+
+
 **2. Build an app that re-creates the plots shown on page 810 of this paper. The paper is included in the folder. It compares the relative abundance % to the distance from villages in rural Gabon. Use shiny dashboard and add aesthetics to the plot.  **  
+
+```{r}
+ui <- dashboardPage(
+  dashboardHeader(title = "Vertebrate"),
+  dashboardSidebar(disable = T),
+  dashboardBody(
+  fluidRow(
+  box(title = "Plot Options", width = 3,
+  selectInput("x", "Select RA of Species", choices = c("ra_apes", "ra_birds", "ra_elephant", "ra_monkeys"), 
+              selected = "ra_apes"),
+  sliderInput("pointsize", "Select the Point Size", min = 1, max = 5, value = 2, step = 0.5)
+
+  ), # close the first box
+  
+  box(title = "RA to the distance", width = 7,
+  plotOutput("plot", width = "600px", height = "500px")
+  ) # close the second box
+  ) # close the row
+  ) # close the dashboard body
+) # close the ui
+
+server <- function(input, output, session) { 
+  session$onSessionEnded(stopApp)
+  output$plot <- renderPlot({
+  vertebrate%>%
+      ggplot(aes_string(x=input$x, y="distance")) +
+      geom_point(size=input$pointsize, alpha=0.8) + 
+      theme_light()
+    })
+}
+
+shinyApp(ui, server)
+```
+
+
+
 
 ## Push your final code to GitHub!
 Please be sure that you check the `keep md` file in the knit preferences. 
