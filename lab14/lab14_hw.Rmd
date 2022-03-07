@@ -3,7 +3,7 @@ title: "Lab 14 HW"
 output: 
   html_document: 
     keep_md: yes
-author: "your name here"
+author: "Songhee Kim"
 date: '2022-02-28'
 ---
 
@@ -18,7 +18,7 @@ library("palmerpenguins")
 library(ggVennDiagram)
 library(RColorBrewer)
 
-#install.packages("ggworldcloud")
+#install.packages("ggwordcloud")
 library(ggwordcloud)
 
 
@@ -100,12 +100,13 @@ superhero_info%>%
 Remind yourself what `beachbugs` looks like. Then generate a heatmap of buglevels by site and year. 
 color it with `scale_fill_gradient(low="yellow", high="red")` or colors of your choice. you may find it looks best with one color!
 (dont forget, `coord_flip()` is a quick way to improve the look of your plot if you dont like the default orientation)
+
 ```{r}
-beachbugs
+beachbugs_long
 ```
 
 ```{r}
-beachbugs%>%
+beachbugs_long%>%
   ggplot(aes(site, year, fill=buglevels))+
   geom_tile()+
   scale_fill_gradient(low="yellow", high="red")+
@@ -113,7 +114,7 @@ beachbugs%>%
 ```
 
 ```{r}
-beachbugs%>%
+beachbugs_long%>%
   ggplot(aes(site, year, fill=buglevels))+
   geom_tile()+
   scale_fill_gradient(low="yellow", high="red")+
@@ -172,54 +173,97 @@ Are they bald?
 Start by making the 4 vectors, then the list of vectors. The vector for alignment is provided:
 ### super heros venn
 ```{r}
+superhero_info<-clean_names(superhero_info)
+superhero_info
+```
+
+```{r}
 # evil
 
-#evil_vec <- superhero_info %>%
-#  filter(alignment == "bad")%>%
-#  pull(name)
+evil_vec <- superhero_info %>%
+  filter(alignment == "bad")%>%
+  pull(name)
 
 # red eyes
 
+redeye_vec <- superhero_info %>%
+  filter(eye_color=="red")%>%
+  pull(name)
 
 # male
 
+male_vec <- superhero_info%>%
+  filter(gender=="Male")%>%
+  pull(name)
 
 # bald
 
+bald_vec <- superhero_info %>%
+  filter(hair_color=="No Hair")%>%
+  pull(name)
 
 ```
 
 Your list of vectors will look something like this:
 ```{r}
-# questions_list <- list(evil_vec, red_eye_vec, male_vec, bald_vec)
-
+questions_list <- list(evil_vec, redeye_vec, male_vec, bald_vec)
 ```
 
 ### 9. 
 Let's make the venn diagram! use the code from lab as a reference. 
 ```{r}
-# something like:
-# ggVennDiagram( list, category.names = c("name", "name", "name", "name"))
-
-
-
+ggVennDiagram(questions_list, category.names = c("Evil", "Red_eye", "Male", "Bald"))
 ```
 
 
 ### 10. Choose one intersection of the venn diagram that is interesting to you. Use dplyr to find the names of the superheros in that intersection. 
 
 ```{r}
-
+superhero_info%>%
+  filter(gender=="Male"&eye_color=="red"&hair_color=="No Hair"&alignment!="bad")
 ```
 
 
 
 ### 11. Make another venn diagram with the `superhero_info` data. What are your questions? ( At least 2!) 
 ```{r}
+superhero_info
+```
 
+```{r}
+female_vec <- superhero_info%>%
+  filter(gender=="Female")%>%
+  pull(name)
+
+bad_vec <- superhero_info%>%
+  filter(alignment=="bad")%>%
+  pull(name)
+
+marvel_vec <- superhero_info%>%
+  filter(publisher=="Marvel Comics")%>%
+  pull(name)
+
+vampire_vec <- superhero_info%>%
+  filter(race=="Vampire")%>%
+  pull(name)
+```
+
+```{r}
+prac_list <- list(female_vec, bad_vec, marvel_vec)
+```
+
+```{r}
+ggVennDiagram(prac_list, category.names = c("Female", "Evil", "Marvel"))
 ```
 
 
+```{r}
+prac_list_2 <- list(female_vec, vampire_vec, redeye_vec)
+```
+
+```{r}
+ggVennDiagram(prac_list_2, category.names = c("Female", "Vampire", "Red eye"))
+```
 
 ### 12.
 What are some very common super powers? Lets make a word cloud with the `superhero_powers` data.
@@ -230,6 +274,7 @@ Remember, you can change `scale_size_area(max_size = 20)` to a different number 
 ```{r}
 head(superhero_powers)
 ```
+
 ```{r}
 power_frequency <- superhero_powers %>% 
   select(-hero_names) %>%
@@ -240,10 +285,17 @@ power_frequency
 
 
 ```{r}
-
-
-
+power_frequency%>%
+  ggplot(aes(
+    label=power,
+    size=freq,
+    color=power
+  ))+
+  geom_text_wordcloud() +
+  scale_size_area(max_size = 10)+
+  theme_minimal()
 ```
+
 ### 13.  
 Who are some very powerful supers? 
  Lets make a different word cloud with the `superhero_powers` data. 
@@ -268,12 +320,18 @@ power_quantity
 
 ```
 
-
-
 ```{r}
-
-
+power_quantity%>%
+  ggplot(aes(
+    label=hero_names,
+    size=sum_powers,
+    color=hero_names
+  ))+
+  geom_text_wordcloud() +
+  scale_size_area(max_size = 10)+
+  theme_minimal()
 ```
+
 
 ## That's it! 🎉
 Thanks for coding with us all winter! 
