@@ -9,9 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Please Add Your Name Here" />
+<meta name="author" content="Songhee Kim" />
 
-<meta name="date" content="2022-01-27" />
+<meta name="date" content="2022-03-14" />
 
 <title>Lab 3 Homework</title>
 
@@ -62,6 +62,7 @@ if (window.hljs) {
 
 
 
+
 <style type="text/css">
 .main-container {
   max-width: 940px;
@@ -82,6 +83,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -166,8 +170,8 @@ pre code {
 
 
 <h1 class="title toc-ignore">Lab 3 Homework</h1>
-<h4 class="author">Please Add Your Name Here</h4>
-<h4 class="date">2022-01-27</h4>
+<h4 class="author">Songhee Kim</h4>
+<h4 class="date">2022-03-14</h4>
 
 </div>
 
@@ -187,12 +191,12 @@ pre code {
 <li>For this assignment, we are going to use built-in data on mammal sleep patterns. From which publication are these data taken from? Since the data are built-in you can use the help function in R.</li>
 </ol>
 <pre class="r"><code>mammal_sp&lt;-readr::read_csv(&quot;data/mammals_sleep_allison_cicchetti_1976.csv&quot;)</code></pre>
-<pre><code>## Rows: 62 Columns: 11</code></pre>
-<pre><code>## -- Column specification --------------------------------------------------------
+<pre><code>## Rows: 62 Columns: 11
+## -- Column specification --------------------------------------------------------
 ## Delimiter: &quot;,&quot;
 ## chr  (1): species
-## dbl (10): body weight in kg, brain weight in g, slow wave (&quot;nondreaming&quot;) sl...</code></pre>
-<pre><code>## 
+## dbl (10): body weight in kg, brain weight in g, slow wave (&quot;nondreaming&quot;) sl...
+## 
 ## i Use `spec()` to retrieve the full column specification for this data.
 ## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <ol start="2" style="list-style-type: decimal">

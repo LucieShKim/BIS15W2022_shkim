@@ -1,7 +1,7 @@
 ---
 title: "Lab 3 Homework"
-author: "Please Add Your Name Here"
-date: "2022-01-27"
+author: "Songhee Kim"
+date: "2022-03-14"
 output:
   html_document: 
     theme: spacelab
@@ -28,16 +28,10 @@ mammal_sp<-readr::read_csv("data/mammals_sleep_allison_cicchetti_1976.csv")
 
 ```
 ## Rows: 62 Columns: 11
-```
-
-```
 ## -- Column specification --------------------------------------------------------
 ## Delimiter: ","
 ## chr  (1): species
 ## dbl (10): body weight in kg, brain weight in g, slow wave ("nondreaming") sl...
-```
-
-```
 ## 
 ## i Use `spec()` to retrieve the full column specification for this data.
 ## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
